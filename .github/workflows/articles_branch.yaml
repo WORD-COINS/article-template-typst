@@ -114,6 +114,7 @@ jobs:
           name: ${{ steps.compile_article.outputs.artifact_name }}.pdf
           path: ${{ github.workspace }}/${{ matrix.dir }}/${{ steps.compile_article.outputs.artifact_name }}.pdf
           retention-days: 7
+          archive: false
 
   comment-artifact:
     needs: compile-articles
