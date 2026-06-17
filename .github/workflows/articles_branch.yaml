@@ -129,6 +129,8 @@ jobs:
           
           echo "## :tada:記事がビルドされました！:tada:" > comment.md
           echo "" >> comment.md
+          echo "| 記事名 | プレビュー (推奨) | ダウンロード (予備) |" >> comment.md
+          echo "| :--- | :--- | :--- |" >> comment.md
 
           # 'owner/repo' を/で区切りownerとrepoを取得
           owner=$(echo "${{ github.repository }}" | cut -d'/' -f1)
@@ -148,9 +150,7 @@ jobs:
             pdf_size=$(numfmt --to=iec --suffix=B <<< "$pdf_size_bytes")
             pdf_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${pdf_id}"
 
-            echo "- ${article_name}" >> comment.md
-            echo "  - [ZIP圧縮されたPDFファイルをブラウザで開く](${preview_url}): (${zip_size})" >> comment.md
-            echo "  - [ArtifactのPDFファイルを表示](${pdf_url}): (${pdf_size})" >> comment.md
+            echo "| ${article_name} | [プラウザで見る](${preview_url}) (${zip_size}) | [PDFをダウンロード](${pdf_url}) (${pdf_size}) |" >> comment.md
           done
 
           # 4. 共通フッターの追加
