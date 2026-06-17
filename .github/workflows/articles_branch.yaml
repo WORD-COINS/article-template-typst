@@ -18,7 +18,7 @@ jobs:
           commits: ${{ github.event.pull_request.commits }}
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.get_fetch_depth.outputs.fetch_depth }}
@@ -41,7 +41,7 @@ jobs:
         dir: ${{ fromJson(needs.get-branch-info.outputs.dirs) }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Prepare Variables
         run: |
           if [ "$(uname -m)" = "x86_64" ]; then
@@ -54,7 +54,7 @@ jobs:
           fi
 
       - name: Cache Typst
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: typst-cache
         with:
           path: /usr/local/bin/typst
@@ -74,7 +74,7 @@ jobs:
           rm typst.tar.xz
 
       - name: Cache Fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: fonts-cache
         with:
           path: |
