@@ -156,10 +156,14 @@ jobs:
           # 4. 共通フッターの追加
           job_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           expired_date=$(date --date "7 days" +%F)
+          commit_sha="${{ github.event.pull_request.head.sha }}"
+          commit_link="${{ github.server_url }}/${{ github.repository }}/commit/${commit_sha}"
           
           echo "" >> comment.md
-          echo "有効期限 (おおよそ): ${expired_date}" >> comment.md
-          echo "有効期限が切れた場合は [こちら](${job_url}) から「Re-run all jobs」を実行してください。" >> comment.md
+          echo "**ビルド情報**" >> comment.md
+          echo "- コミット: [\`${commit_sha:0:7}\`](${commit_link})" >> comment.md
+          echo "- 有効期限 (おおよそ): ${expired_date}" >> comment.md
+          echo "- 有効期限が切れた場合は [こちら](${job_url}) から「Re-run all jobs」を実行してください。" >> comment.md
 
           gh pr comment "${{ github.event.pull_request.html_url }}" --body-file comment.md --edit-last --create-if-none
 
