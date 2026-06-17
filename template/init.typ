@@ -1,5 +1,5 @@
 #import "/template/utils.typ": body-setting, page-setting
-#import "@preview/cjk-unbreak:0.2.2": remove-cjk-break-space
+#import "@preview/cjk-unbreak:0.2.3": remove-cjk-break-space
 
 #let has-initialized-state = state("has-initialized-state", false)
 

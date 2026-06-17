@@ -1,6 +1,6 @@
 #import "/template/article.typ": article
-#import "@preview/cmarker:0.1.7"
-#import "@preview/mitex:0.2.6": mitex
+#import "@preview/cmarker:0.1.8"
+#import "@preview/mitex:0.2.7": mitex
 
 #show: article.with(
   title: "記事を執筆しよう",
