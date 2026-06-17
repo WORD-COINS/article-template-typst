@@ -1,23 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Colour definitions
-RED='\033[31m'
-YELLOW='\033[33m'
-GREEN='\033[32m'
-CYAN='\033[36m'
-BOLD='\033[1m'
-RESET='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$SCRIPT_DIR/lib.sh"
 
 declare -A missing_fonts=()
 
-# Read from stdin
 while IFS='=' read -r name url; do
-  # Skip comment or empty line
-  [[ -z "$name" || "${name//[[:space:]]/}" = "#" ]] && continue
-
   missing_fonts["$name"]="$url"
-done
+done < <(read_font_entries)
 
 
 # If any input arrived, treat each as a missing font and emit a warning

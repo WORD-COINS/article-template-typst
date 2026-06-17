@@ -1,21 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$SCRIPT_DIR/lib.sh"
+
 declare -A require_fonts
 
-# Read from fonts.list
-while IFS='=' read -r raw_name raw_url; do
-  # Skip comment or empty line
-  [[ -z "$raw_name" || "${raw_name//[[:space:]]/}" = "#" ]] && continue
-
-  # Trim space
-  name="${raw_name#"${raw_name%%[![:space:]]*}"}"
-  name="${name%"${name##*[![:space:]]}"}"
-  url="${raw_url#"${raw_url%%[![:space:]]*}"}"
-  url="${url%"${url##*[![:space:]]}"}"
-
+while IFS='=' read -r name url; do
   require_fonts["$name"]="$url"
-done < "$(dirname $0)/fonts.list"
+done < <(read_font_entries < "$SCRIPT_DIR/fonts.list")
 
 mapfile -t installed_families < <(typst fonts --font-path=fonts)
 
