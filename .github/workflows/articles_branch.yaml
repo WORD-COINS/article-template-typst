@@ -106,6 +106,7 @@ jobs:
           name: ${{ steps.compile_article.outputs.artifact_name }}.pdf.zip
           path: ${{ github.workspace }}/${{ matrix.dir }}/${{ steps.compile_article.outputs.artifact_name }}.pdf
           retention-days: 7
+          compression-level: 9
 
       - name: upload artifact(uncompressed)
         id: upload_artifact_uncompressed
