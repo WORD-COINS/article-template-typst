@@ -3,6 +3,7 @@ name: Articles Branch CI
 on:
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 jobs:
   get-branch-info:
@@ -18,7 +19,7 @@ jobs:
           commits: ${{ github.event.pull_request.commits }}
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.get_fetch_depth.outputs.fetch_depth }}
@@ -41,7 +42,7 @@ jobs:
         dir: ${{ fromJson(needs.get-branch-info.outputs.dirs) }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Prepare Variables
         run: |
           if [ "$(uname -m)" = "x86_64" ]; then
@@ -54,7 +55,7 @@ jobs:
           fi
 
       - name: Cache Typst
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: typst-cache
         with:
           path: /usr/local/bin/typst
@@ -74,7 +75,7 @@ jobs:
           rm typst.tar.xz
 
       - name: Cache Fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: fonts-cache
         with:
           path: |
@@ -93,7 +94,7 @@ jobs:
           cd "${{ github.workspace }}/${{ matrix.dir }}"
           make compile
 
-          # ファルパスから "articles/" を削除し、"/" を "_" に置換
+          # ファイルパスから "articles/" を削除し、"/" を "_" に置換
           ARTIFACT_NAME=$(echo "${{ matrix.dir }}" | sed 's|^articles/||' | tr '/' '_')
           mv main.pdf "${ARTIFACT_NAME}.pdf"
 
@@ -106,6 +107,16 @@ jobs:
           name: ${{ steps.compile_article.outputs.artifact_name }}.pdf.zip
           path: ${{ github.workspace }}/${{ matrix.dir }}/${{ steps.compile_article.outputs.artifact_name }}.pdf
           retention-days: 7
+          compression-level: 9
+
+      - name: upload artifact(uncompressed)
+        id: upload_artifact_uncompressed
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.compile_article.outputs.artifact_name }}.pdf
+          path: ${{ github.workspace }}/${{ matrix.dir }}/${{ steps.compile_article.outputs.artifact_name }}.pdf
+          retention-days: 7
+          archive: false
 
   comment-artifact:
     needs: compile-articles
@@ -119,26 +130,41 @@ jobs:
           
           echo "## :tada:記事がビルドされました！:tada:" > comment.md
           echo "" >> comment.md
+          echo "| 記事名 | プレビュー (推奨) | ダウンロード (予備) |" >> comment.md
+          echo "| :--- | :--- | :--- |" >> comment.md
 
-          # jqで各ArtifactのnameとIDを抽出してループ
-          echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | "\(.name)\t\(.id)"' | while IFS=$'\t' read -r name id; do
-            # 'owner/repo' を/で区切りownerとrepoを取得
-            owner=$(echo "${{ github.repository }}" | cut -d'/' -f1)
-            repo=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          # 'owner/repo' を/で区切りownerとrepoを取得
+          owner=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          repo=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+
+          # .pdf.zipアーティファクトを基準に記事名でグループ化して出力
+          echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name | endswith(".pdf.zip")) | "\(.name)\t\(.id)\t\(.size_in_bytes)"' | while IFS=$'\t' read -r zip_name zip_id zip_size_bytes; do
+            article_name="${zip_name%.pdf.zip}"
             
-            artifact_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${id}"
-            preview_url="https://word-coins.github.io/artifact-previewer/?owner=${owner}&repo=${repo}&artifact_id=${id}"
-            
-            echo "- [${name}](${artifact_url}) ([プレビュー](${preview_url}))" >> comment.md
+            zip_size=$(numfmt --to=iec --suffix=B <<< "$zip_size_bytes")
+            preview_url="https://word-coins.github.io/artifact-previewer/?owner=${owner}&repo=${repo}&artifact_id=${zip_id}"
+
+            # 対応する .pdf アーティファクトを検索
+            pdf_info=$(echo "$ARTIFACTS_JSON" | jq -r --arg pdfname "${article_name}.pdf" '.artifacts[] | select(.name == $pdfname) | "\(.id)\t\(.size_in_bytes)"')
+            pdf_id=$(echo "$pdf_info" | cut -f1)
+            pdf_size_bytes=$(echo "$pdf_info" | cut -f2)
+            pdf_size=$(numfmt --to=iec --suffix=B <<< "$pdf_size_bytes")
+            pdf_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${pdf_id}"
+
+            echo "| ${article_name} | [ブラウザで見る](${preview_url}) (${zip_size}) | [PDFをダウンロード](${pdf_url}) (${pdf_size}) |" >> comment.md
           done
 
           # 4. 共通フッターの追加
           job_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           expired_date=$(date --date "7 days" +%F)
+          commit_sha="${{ github.event.pull_request.head.sha }}"
+          commit_link="${{ github.server_url }}/${{ github.repository }}/commit/${commit_sha}"
           
           echo "" >> comment.md
-          echo "有効期限 (おおよそ): ${expired_date}" >> comment.md
-          echo "有効期限が切れた場合は [こちら](${job_url}) から「Re-run all jobs」を実行してください。" >> comment.md
+          echo "**ビルド情報**" >> comment.md
+          echo "- コミット: [\`${commit_sha:0:7}\`](${commit_link})" >> comment.md
+          echo "- 有効期限 (おおよそ): ${expired_date}" >> comment.md
+          echo "- 有効期限が切れた場合は [こちら](${job_url}) から「Re-run all jobs」を実行してください。" >> comment.md
 
           gh pr comment "${{ github.event.pull_request.html_url }}" --body-file comment.md --edit-last --create-if-none
 
