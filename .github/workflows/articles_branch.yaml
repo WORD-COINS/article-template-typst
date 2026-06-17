@@ -93,7 +93,7 @@ jobs:
           cd "${{ github.workspace }}/${{ matrix.dir }}"
           make compile
 
-          # ファルパスから "articles/" を削除し、"/" を "_" に置換
+          # ファイルパスから "articles/" を削除し、"/" を "_" に置換
           ARTIFACT_NAME=$(echo "${{ matrix.dir }}" | sed 's|^articles/||' | tr '/' '_')
           mv main.pdf "${ARTIFACT_NAME}.pdf"
 
@@ -150,7 +150,7 @@ jobs:
             pdf_size=$(numfmt --to=iec --suffix=B <<< "$pdf_size_bytes")
             pdf_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${pdf_id}"
 
-            echo "| ${article_name} | [プラウザで見る](${preview_url}) (${zip_size}) | [PDFをダウンロード](${pdf_url}) (${pdf_size}) |" >> comment.md
+            echo "| ${article_name} | [ブラウザで見る](${preview_url}) (${zip_size}) | [PDFをダウンロード](${pdf_url}) (${pdf_size}) |" >> comment.md
           done
 
           # 4. 共通フッターの追加
