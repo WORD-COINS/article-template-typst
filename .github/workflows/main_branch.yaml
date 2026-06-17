@@ -66,4 +66,5 @@ jobs:
         with:
           name: main.pdf
           path: main.pdf
-          retention-days: 3
+          retention-days: 7
+          archive: false
