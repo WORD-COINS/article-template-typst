@@ -20,9 +20,11 @@ read_font_entries() {
     name="$(trim "${raw_name:-}")"
     url="$(trim "${raw_url:-}")"
 
-    [[ -z "$name" || "${name:0:1}" = "#" ]] && continue
+    [[ -z "$name" || "${name:0:1}" = "#" ]] && { raw_name=; raw_url=; continue; }
 
     printf '%s=%s\n' "$name" "$url"
+    raw_name=
+    raw_url=
   done
 }
 
