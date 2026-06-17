@@ -139,7 +139,6 @@ jobs:
             article_name="${zip_name%.pdf.zip}"
             
             zip_size=$(numfmt --to=iec --suffix=B <<< "$zip_size_bytes")
-            zip_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${zip_id}"
             preview_url="https://word-coins.github.io/artifact-previewer/?owner=${owner}&repo=${repo}&artifact_id=${zip_id}"
 
             # 対応する .pdf アーティファクトを検索
@@ -150,8 +149,8 @@ jobs:
             pdf_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${pdf_id}"
 
             echo "- ${article_name}" >> comment.md
-            echo "  - [${article_name}.pdf](${pdf_url}) (${pdf_size})" >> comment.md
-            echo "  - [${zip_name}](${zip_url}) (${zip_size}): [プレビュー](${preview_url})" >> comment.md
+            echo "  - [ZIP圧縮されたPDFファイルをブラウザで開く](${preview_url}): (${zip_size})" >> comment.md
+            echo "  - [ArtifactのPDFファイルを表示](${pdf_url}): (${pdf_size})" >> comment.md
           done
 
           # 4. 共通フッターの追加
