@@ -4,7 +4,7 @@
 
 ## 必要なもの
 
-- [Bash](https://www.gnu.org/software/bash/): **4系以上が必要です**（特に macOS にプリインストールの bash はこの条件を満たさない可能性があります）
+- [Bash](https://www.gnu.org/software/bash/)
 - [Git](https://git-scm.com/)
 - [Typst](https://typst.app/)
 - [GNU Make](https://www.gnu.org/software/make/)
@@ -63,11 +63,11 @@ echo '\n#include "articles/my_article/main.typ"' >> main.typ
 
 > [!TIP]
 > 執筆に Visual Studio Code を使う場合は [`.vscode/extensions.json`](.vscode/extensions.json) にある拡張機能を導入すると便利です。
-> 
+>
 > また、記事のプレビューも可能です。
-> 
+>
 > 全体をプレビューしたい場合はリポジトリのルートディレクトリにある [`main.typ`](main.typ) を開き、右上にあるプレビューボタンを押してください。
-> 
+>
 > 各記事ごとにプレビューしたい場合も同様に Typst ファイルを開き、右上にあるプレビューボタンを押してください。
 > このプレビューはホットリードが効きますから、執筆に便利です。
 
