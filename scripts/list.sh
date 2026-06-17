@@ -4,22 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/lib.sh"
 
-declare -A require_fonts
+installed_families="$(typst fonts --font-path=fonts | tr '[:upper:]' '[:lower:]')"
 
 while IFS='=' read -r name url; do
-  require_fonts["$name"]="$url"
-done < <(read_font_entries < "$SCRIPT_DIR/fonts.list")
-
-mapfile -t installed_families < <(typst fonts --font-path=fonts)
-
-declare -A fam_map=()
-for fam in "${installed_families[@]}"; do
-  fam_map["${fam,,}"]=1
-done
-
-for name in "${!require_fonts[@]}"; do
-  key="${name,,}"
-  if [[ -z "${fam_map[$key]+x}" ]]; then
-    echo "${name}=${require_fonts[$name]}"
+  key="$(lowercase "$name")"
+  if ! printf '%s\n' "$installed_families" | grep -Fxq "$key"; then
+    echo "${name}=${url}"
   fi
-done
+done < <(read_font_entries < "$SCRIPT_DIR/fonts.list")

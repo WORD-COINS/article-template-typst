@@ -4,8 +4,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/lib.sh"
 
-declare -A missing_fonts=()
-
 if ! command -v unzip >/dev/null 2>&1; then
   printf "%bunzip is required to run this script%b\n" "$YELLOW" "$RESET"
   exit 1
@@ -16,20 +14,16 @@ if ! command -v wget >/dev/null 2>&1; then
   exit 1
 fi
 
-while IFS='=' read -r name url; do
-  missing_fonts["$name"]="$url"
-done < <(read_font_entries)
-
 mkdir -p fonts
 
 # TODO: consider multithread
-for name in "${!missing_fonts[@]}"; do
+while IFS='=' read -r name url; do
   echo "Download ${name}..."
   # Create temporary directory for each font
   TEMP_DIR=$(mktemp -d)
   trap 'rm -rf "$TEMP_DIR"' EXIT
 
-  wget -q "${missing_fonts[$name]}" -P "$TEMP_DIR/"
+  wget -q "$url" -P "$TEMP_DIR/"
 
   shopt -s nullglob
   zip_files=("$TEMP_DIR"/*.zip)
@@ -46,4 +40,4 @@ for name in "${!missing_fonts[@]}"; do
 
   rm -rf "$TEMP_DIR"
   trap - EXIT
-done
+done < <(read_font_entries)

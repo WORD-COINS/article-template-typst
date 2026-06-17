@@ -25,3 +25,7 @@ read_font_entries() {
     printf '%s=%s\n' "$name" "$url"
   done
 }
+
+lowercase() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
