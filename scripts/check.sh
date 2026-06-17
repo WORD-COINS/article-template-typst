@@ -1,35 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Colour definitions
-RED='\033[31m'
-YELLOW='\033[33m'
-GREEN='\033[32m'
-CYAN='\033[36m'
-BOLD='\033[1m'
-RESET='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$SCRIPT_DIR/lib.sh"
 
-declare -A missing_fonts=()
+missing_count=0
 
-# Read from stdin
 while IFS='=' read -r name url; do
-  # Skip comment or empty line
-  [[ -z "$name" || "${name//[[:space:]]/}" = "#" ]] && continue
-
-  missing_fonts["$name"]="$url"
-done
+  missing_count=$((missing_count + 1))
+  printf "%b• %b${BOLD}%s${RESET}%b is missing\n" \
+    "$RED" "" "$name" "$RED"
+  printf "   → Download at: %b%s%b\n" \
+    "$CYAN" "$url" "$RESET"
+done < <(read_font_entries)
 
 
 # If any input arrived, treat each as a missing font and emit a warning
-if (( ${#missing_fonts[@]} )); then
-  for font in "${!missing_fonts[@]}"; do
-    printf "%b• %b${BOLD}%s${RESET}%b is missing\n" \
-      "$RED" "" "$font" "$RED"
-    printf "   → Download at: %b%s%b\n" \
-      "$CYAN" "${missing_fonts[$font]}" "$RESET"
-  done
+if (( missing_count )); then
   printf "\n%b%d font(s) is missing%b\n" \
-    "$YELLOW" "${#missing_fonts[@]}" "$RESET"
+    "$YELLOW" "$missing_count" "$RESET"
   exit 1
 else
   printf "%b✓ All required fonts are available!%b\n" \
