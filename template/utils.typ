@@ -150,12 +150,12 @@
   show raw: set text(font: fonts.raw)
   set raw(
     // コメントだけ色が薄いカラースキーム
-    theme: "assets/quiet.tmTheme"
+    theme: "assets/quiet.tmTheme",
   )
 
   show quote: set pad(0em)
   show quote.where(): set block(below: 0mm, above: 0mm)
-    show quote.where(): it => {
+  show quote.where(): it => {
     block(
       width: 100%,
       stroke: (left: (paint: luma(45%), thickness: 0.3mm)),
@@ -164,7 +164,7 @@
       above: 1.5em,
       below: 1.5em,
       breakable: false,
-      text(fill: luma(30%), it)
+      text(fill: luma(30%), it),
     )
   }
 
@@ -179,8 +179,7 @@
     grid(
       columns: (auto, 1fr),
       gutter: 0.75em,
-      numbering(sym.dagger + "1", ..counter(footnote).at(it.note.location())),
-      it.note.body,
+      numbering(sym.dagger + "1", ..counter(footnote).at(it.note.location())), it.note.body,
     )
   }
 

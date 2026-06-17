@@ -18,17 +18,23 @@
   ),
   html: (
     pagebreak: ("void", _ => pagebreak()),
-    h: ("void", attrs => {
-      h(int(attrs.value) * 1pt)
-    }),
+    h: (
+      "void",
+      attrs => {
+        h(int(attrs.value) * 1pt)
+      },
+    ),
     v: ("void", attrs => v(int(attrs.value) * 1pt)),
-    img: ("void", attrs => figure(
-      image(
-        attrs.src,
-        width: eval(attrs.at("width", default: "auto")),
-        height: eval(attrs.at("height", default: "auto")),
+    img: (
+      "void",
+      attrs => figure(
+        image(
+          attrs.src,
+          width: eval(attrs.at("width", default: "auto")),
+          height: eval(attrs.at("height", default: "auto")),
+        ),
+        caption: attrs.alt,
       ),
-      caption: attrs.alt
-    ))
-  )
+    ),
+  ),
 )
