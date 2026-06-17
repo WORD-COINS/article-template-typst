@@ -3,8 +3,6 @@
 #import "/template/cover.typ": cover
 #import "/template/backcover.typ": backcover
 
-#let date-format = "[year]年[month repr:numerical padding:none]月[day padding:none]日"
-
 #let project(
   title: "",
   author: "筑波大学情報学群 情報科学類 WORD編集部",

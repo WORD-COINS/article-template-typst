@@ -1,4 +1,4 @@
-#let date-format = "[year]年[month repr:numerical padding:none]月[day padding:none]日";
+#import "/template/constants.typ": assets, date-format
 
 #let backcover(
   title: "",
@@ -21,7 +21,7 @@
     dy: -4pt,
     image(
       width: 100%,
-      "assets/wordlogo.svg",
+      assets.wordlogo,
     ),
   )
 

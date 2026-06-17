@@ -1,6 +1,14 @@
 #import "/template/init.typ": initialize
 #import "/template/codeblock.typ": init-codeblock
 
+#let author-label(name, authormark) = {
+  if authormark == none {
+    name
+  } else {
+    [#authormark#name]
+  }
+}
+
 #let author-block(name, authormark) = [
   #metadata(name) <author>
   #align(
@@ -9,11 +17,19 @@
       top: 1.0em,
       bottom: 1.75em,
       text(size: 10.5pt)[
-        #authormark#name
+        #author-label(name, authormark)
       ],
     ),
   )
 ]
+
+#let reset-article-counters() = {
+  counter(footnote).update(0)
+  counter(math.equation).update(0)
+  counter(figure.where(kind: image)).update(0)
+  counter(figure.where(kind: table)).update(0)
+  counter(figure.where(kind: raw)).update(0)
+}
 
 #let article(
   title: "",
@@ -30,11 +46,7 @@
 
   set heading(offset: 1)
 
-  counter(footnote).update(0)
-  counter(math.equation).update(0)
-  counter(figure.where(kind: image)).update(0)
-  counter(figure.where(kind: table)).update(0)
-  counter(figure.where(kind: raw)).update(0)
+  reset-article-counters()
 
   body
 }
