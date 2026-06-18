@@ -1,4 +1,4 @@
-#import "/template/init.typ": initialize
+#import "/template/init.typ": initialize-body, initialize-page
 #import "/template/toc.typ": toc
 #import "/template/cover.typ": cover
 #import "/template/backcover.typ": backcover
@@ -18,18 +18,24 @@
     date: editions.last().date,
     keywords: keywords,
   )
-  show: initialize
+  show: initialize-page
 
   cover()
-  toc()
+  {
+    show: initialize-body
+    toc()
+  }
 
   counter(page).update(1)
   body
 
-  backcover(
-    title: title,
-    publisher: publisher,
-    editor-chief: editor-chief,
-    editions: editions,
-  )
+  {
+    show: initialize-body
+    backcover(
+      title: title,
+      publisher: publisher,
+      editor-chief: editor-chief,
+      editions: editions,
+    )
+  }
 }
