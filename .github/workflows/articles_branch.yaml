@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Cache Typst
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: typst-cache
         with:
           path: /usr/local/bin/typst
@@ -75,7 +75,7 @@ jobs:
           rm typst.tar.xz
 
       - name: Cache Fonts
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: fonts-cache
         with:
           path: |
