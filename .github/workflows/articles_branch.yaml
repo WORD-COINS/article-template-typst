@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   get-branch-info:
@@ -125,6 +124,9 @@ jobs:
   comment-artifact:
     needs: compile-articles
     runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
       - name: Post a comment
         env:
