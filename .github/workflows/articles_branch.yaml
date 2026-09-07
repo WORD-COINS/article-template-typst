@@ -5,6 +5,9 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   get-branch-info:
     runs-on: ubuntu-24.04
@@ -121,6 +124,9 @@ jobs:
   comment-artifact:
     needs: compile-articles
     runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
       - name: Post a comment
         env:
