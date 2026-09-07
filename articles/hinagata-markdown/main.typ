@@ -1,5 +1,5 @@
 #import "/template/article.typ": article
-#import "@preview/cmarker:0.1.8"
+#import "@preview/cmarker:0.1.10"
 #import "@preview/mitex:0.2.7": mitex
 
 #show: article.with(
