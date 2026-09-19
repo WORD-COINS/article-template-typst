@@ -22,7 +22,7 @@ jobs:
           commits: ${{ github.event.pull_request.commits }}
 
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: ${{ steps.get_fetch_depth.outputs.fetch_depth }}
@@ -45,7 +45,7 @@ jobs:
         dir: ${{ fromJson(needs.get-branch-info.outputs.dirs) }}
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Prepare Variables
         run: |
           if [ "$(uname -m)" = "x86_64" ]; then
