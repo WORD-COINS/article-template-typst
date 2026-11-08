@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   get-branch-info:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       dirs: ${{ steps.branch_info.outputs.dirs }}
       has_changes: ${{ steps.branch_info.outputs.has_changes }}
@@ -38,7 +38,7 @@ jobs:
 
   compile-articles:
     needs: get-branch-info
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: needs.get-branch-info.outputs.has_changes
     strategy:
       matrix:
@@ -123,7 +123,7 @@ jobs:
 
   comment-artifact:
     needs: compile-articles
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       pull-requests: write
